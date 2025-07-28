@@ -1,0 +1,47 @@
+{
+    "scopeName": "source.senior",
+    "name": "Senior LSP",
+    "patterns": [
+        {
+            "name": "comment.line.senior",
+            "match": "@.*$"
+        },
+        {
+            "name": "comment.block.senior",
+            "begin": "/\\*",
+            "end": "\\*/"
+        },
+        {
+            "name": "keyword.control.senior",
+            "match": "\\b(se|Se|senao|Senao|enquanto|Enquanto|para|Para|fim|Fim|inicio|Inicio|funcao|Funcao|retorne|Retorne|mensagem|Mensagem|cancelar|Cancelar|continue|Continue|vapara|VaPara|regra|Regra)\\b"
+        },
+        {
+            "name": "storage.type.senior",
+            "match": "\\b(definir|Definir|numero|Numero|alfa|Alfa|data|Data|tabela|Tabela|cursor|Cursor|grid|Grid)\\b"
+        },
+        {
+            "name": "constant.language.senior",
+            "match": "\\b(retorna|Retorna|erro|Erro|refaz|Refaz|ler|Ler|gravar|Gravar|abrir|Abrir|fechar|Fechar|achou|Achou|naoachou|NaoAchou|iniciartransacao|IniciarTransacao|finalizartransacao|FinalizarTransacao|desfazertransacao|DesfazerTransacao|execsql|ExecSQL|execsqlex|ExecSQLEx)\\b"
+        },
+        {
+            "name": "keyword.operator.senior",
+            "match": "(=|<>|<=|>=|<|>|\\+|\\-|\\*|/|\\+\\+|\\-\\-|\\be\\b|\\bou\\b)"
+        },
+        {
+            "name": "string.quoted.double.senior",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "match": "\\\\.",
+                    "name": "constant.character.escape.senior"
+                }
+            ]
+        }      
+    ],
+    "fileTypes": [
+        "senior",
+        "sen"
+    ],
+    "uuid": "senior-lsp-syntax"
+}

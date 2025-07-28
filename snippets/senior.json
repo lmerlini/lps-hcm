@@ -1,0 +1,125 @@
+{
+    "Estrutura Se": {
+        "prefix": "se",
+        "body": [
+            "se (${1:condicao})",
+            "{",
+            "    ${2:// comandos se verdadeiro}",
+            "}"
+        ],
+        "description": "Estrutura condicional Se/Senao"
+    },
+    "Estrutura Se/Senao": {
+        "prefix": "sn",
+        "body": [
+            "se (${1:condicao})",
+            "{",
+            "    ${2:// comandos se verdadeiro}",
+            "}",
+            "senao",
+            "{",
+            "    ${3:// comandos se falso}",
+            "}"
+        ],
+        "description": "Estrutura condicional Se/Senao"
+    },
+    "Função com retorno": {
+        "prefix": "funcao",
+        "body": [
+            "definir funcao ${1:Nome}(numero ${2:Par1}, numero end ${3:Retorno})",
+            "funcao ${1:Nome}(numero ${2:Par1}, numero end ${3:Retorno})",
+            "{",
+            "    ${3:Retorno} = ${2:Par1} + 1;",
+            "}"
+        ],
+        "description": "Função com parâmetros numéricos e retorno"
+    },
+    "Loop Enquanto": {
+        "prefix": "enquanto",
+        "body": [
+            "enquanto (${1:condicao})",
+            "{",
+            "    ${2:// comandos enquanto verdadeiro}",
+            "}"
+        ],
+        "description": "Loop Enquanto"
+    },
+    "Definir Variável Alfa": {
+        "prefix": "defa",
+        "body": [
+            "definir alfa ${1:nomeVar};",
+            "${1:nomeVar} = \"\";"
+        ],
+        "description": "Define uma variável alfanumérica"
+    },
+    "Definir Variável Data": {
+        "prefix": "defd",
+        "body": [
+            "definir data ${1:nomeVar};"
+        ],
+        "description": "Define uma variável data"
+    },
+    "Definir Variável Numero": {
+        "prefix": "defn",
+        "body": [
+            "definir numero ${1:nomeVar};"
+        ],
+        "description": "Define uma variável numérica"
+    },
+    "Comentário em Linha": {
+        "prefix": "@@",
+        "body": [
+            "@- ${1:Comentário} -@"
+        ],
+        "description": "Adiciona um comentário"
+    },
+    "Comentários em bloco": {
+        "prefix": "/*",
+        "body": [
+            "/* ${1:Comentário} ${2:multiplias linhas} */"
+        ],
+        "description": "Adiciona um comentário"
+    },
+    "Definir Array Tabela":{
+        "prefix": "defat",
+        "body": [
+            "definir tabela[${1:size}] = { ${2:numero|alfa|data} ${3:var}; };"
+        ],
+        "description": "Define um array de tabela"
+    },
+    "Mensagem de retorno": {
+        "prefix": "msgErro",
+        "body": [
+            "${1:variavel} = mensagem(retorna, \"${2:cancelar}[&Sim], [&Nao], [&Continuar]\");"
+        ],
+        "description": "Exibe uma mensagem de erro"
+    },
+    "Mensagem de erro": {
+        "prefix": "msgErro",
+        "body": [
+            "mensagem(erro, \"${1:Mensagem de erro}\");"
+        ],
+        "description": "Exibe uma mensagem de erro"
+    },
+    "Cancelar Execução": {
+        "prefix": "cancel",
+        "body": [
+            "cancel(${1:n});"
+        ],
+        "description": "Cancela a execução da regra. N pode ser 1 (cancela execução/exclui registro/cancela relatório), 2 (imprime ValStr e sai), ou 3 (exclui registro em fórmula)."
+    },
+    "Cursor Simples": {
+        "prefix": "cursor",
+        "body": [
+            "definir cursor ${1:nomeCursor};",
+            "${1:nomeCursor}.sql = \"${2:SELECT * FROM ${3:tabela}}\";",
+            "${1:nomeCursor}.abrirCursor();",
+            "se (${1:nomeCursor}.achou)",
+            "{",
+            "    ${2:}",
+            "}",
+            "${1:nomeCursor}.fecharCursor();"
+        ],
+        "description": "Abre um cursor simples"
+    }
+}

@@ -1,0 +1,53 @@
+{
+  "name": "lsp-senior-highlight",
+  "displayName": "LSP Senior Highlight",
+  "description": "Realce de sintaxe e variáveis internas para a Linguagem Senior de Programação (LSP).",
+  "version": "0.0.1",
+  "publisher": "MerliniLuis",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MerliniLuis/LSP-Senior-Highlight.git"
+  },
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Senior Sistemas - LSP"
+  ],  
+  "activationEvents": [
+    "onLanguage:senior"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "senior",
+        "aliases": [
+          "LSP Senior",
+          "senior"
+        ],
+        "extensions": [
+          ".lsp"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "senior",
+        "scopeName": "source.senior",
+        "path": "./syntaxes/senior.tmLanguage.json"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vscode": "^1.1.37"
+  }
+}
