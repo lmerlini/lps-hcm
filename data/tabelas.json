@@ -1,9 +1,0 @@
-{
-    "R024CAR": {
-      "ESTCAR": { "tipo": "numero", "chave": true, "descricao": "Código do Carro" },
-      "CODCAR": { "tipo": "alfa", "chave": true, "descricao": "Código do Carro" },
-      "TITRED": { "tipo": "alfa", "descricao": "Título do Redutor" },
-      "DATCRI": { "tipo": "data", "descricao": "Data de Criação" }
-    }
-  }
-  

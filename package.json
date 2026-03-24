@@ -13,13 +13,23 @@
   },
   "categories": [
     "Programming Languages",
-    "Senior Sistemas - LSP"
-  ],  
+    "Other"
+  ],
   "activationEvents": [
     "onLanguage:senior"
   ],
   "main": "./dist/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "senior.createVariable",
+        "title": "Senior: Criar variavel"
+      },
+      {
+        "command": "senior.fixBackslashes",
+        "title": "Senior: Corrigir barras em string"
+      }
+    ],
     "languages": [
       {
         "id": "senior",
@@ -39,12 +49,19 @@
         "scopeName": "source.senior",
         "path": "./syntaxes/senior.tmLanguage.json"
       }
+    ],
+    "snippets": [
+      {
+        "language": "senior",
+        "path": "./snippets/senior.json"
+      }
     ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "test": "npm run compile && node test/run-tests.js"
   },
   "devDependencies": {
     "typescript": "^5.4.5",

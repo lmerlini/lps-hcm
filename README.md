@@ -1,6 +1,6 @@
-# Suporte à Linguagem Senior HCM (Sem suporte para ERP por enquanto)
+# Suporte à Linguagem Senior HCM
 
-Este projeto fornece realce de sintaxe e snippets para a linguagem Senior, projetado para melhorar a experiência de desenvolvimento no Visual Studio Code.
+Esta extensão foi pensada para acelerar o dia a dia com regras LSP Senior no VS Code, com foco atual em HCM e produtividade pessoal.
 
 ## Uso Comunitário
 
@@ -12,8 +12,18 @@ Este projeto não reivindica quaisquer direitos sobre a própria linguagem Senio
 
 ## Funcionalidades
 
-- Realce de sintaxe para palavras-chave e variáveis da linguagem Senior.
-- Snippets para construções comuns da linguagem Senior.
+- Realce de sintaxe para palavras-chave, tipos, operadores, números e strings.
+- Snippets para estruturas comuns da linguagem Senior.
+- Diagnósticos simples para variáveis não declaradas, nomes reservados e barras inválidas em strings.
+- Quick fixes para declarar variável e corrigir barras em strings.
+- Autocomplete contextual para palavras-chave, tipos, tabelas e campos conhecidos.
+- Leitura enriquecida de metadados a partir de `TABLES.Txt` e `relacionamentos.Txt`, quando esses arquivos estiverem presentes na extensão.
+
+## Limitações atuais
+
+- O foco ainda é HCM.
+- O autocomplete usa heurísticas e dados locais de `data/tabelas.json`.
+- Ainda não existe parser completo nem um Language Server separado.
 
 ## Contribuindo
 

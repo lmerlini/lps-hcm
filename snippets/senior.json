@@ -69,7 +69,7 @@
     "Comentário em Linha": {
         "prefix": "@@",
         "body": [
-            "@- ${1:Comentário} -@"
+            "@ ${1:Comentario}"
         ],
         "description": "Adiciona um comentário"
     },
@@ -88,7 +88,7 @@
         "description": "Define um array de tabela"
     },
     "Mensagem de retorno": {
-        "prefix": "msgErro",
+        "prefix": "msgRet",
         "body": [
             "${1:variavel} = mensagem(retorna, \"${2:cancelar}[&Sim], [&Nao], [&Continuar]\");"
         ],

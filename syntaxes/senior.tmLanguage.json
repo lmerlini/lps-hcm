@@ -13,19 +13,27 @@
         },
         {
             "name": "keyword.control.senior",
-            "match": "\\b(se|Se|senao|Senao|enquanto|Enquanto|para|Para|fim|Fim|inicio|Inicio|funcao|Funcao|retorne|Retorne|mensagem|Mensagem|cancelar|Cancelar|continue|Continue|vapara|VaPara|regra|Regra)\\b"
+            "match": "(?i)\\b(se|senao|enquanto|para|fim|inicio|funcao|retorne|mensagem|cancelar|continue|vapara|regra)\\b"
         },
         {
             "name": "storage.type.senior",
-            "match": "\\b(definir|Definir|numero|Numero|alfa|Alfa|data|Data|tabela|Tabela|cursor|Cursor|grid|Grid)\\b"
+            "match": "(?i)\\b(definir|numero|alfa|data|tabela|cursor|grid|fimse|fimpara|fimenquanto)\\b"
         },
         {
             "name": "constant.language.senior",
-            "match": "\\b(retorna|Retorna|erro|Erro|refaz|Refaz|ler|Ler|gravar|Gravar|abrir|Abrir|fechar|Fechar|achou|Achou|naoachou|NaoAchou|iniciartransacao|IniciarTransacao|finalizartransacao|FinalizarTransacao|desfazertransacao|DesfazerTransacao|execsql|ExecSQL|execsqlex|ExecSQLEx)\\b"
+            "match": "(?i)\\b(retorna|erro|refaz|ler|gravar|abrir|fechar|achou|naoAchou|iniciarTransacao|finalizarTransacao|desfazerTransacao|execSql|execSqlEx|proximo|primeiro|ultimo)\\b"
         },
         {
             "name": "keyword.operator.senior",
-            "match": "(=|<>|<=|>=|<|>|\\+|\\-|\\*|/|\\+\\+|\\-\\-|\\be\\b|\\bou\\b)"
+            "match": "(=|<>|<=|>=|<|>|\\+|\\-|\\*|/|\\+\\+|\\-\\-|(?i)\\b(e|ou|nao)\\b)"
+        },
+        {
+            "name": "constant.numeric.senior",
+            "match": "\\b\\d+(?:[\\.,]\\d+)?\\b"
+        },
+        {
+            "name": "entity.name.function.senior",
+            "match": "(?i)\\b([A-Z_][A-Z0-9_]*)(?=\\s*\\()"
         },
         {
             "name": "string.quoted.double.senior",
@@ -41,7 +49,8 @@
     ],
     "fileTypes": [
         "senior",
-        "sen"
+        "sen",
+        "lsp"
     ],
     "uuid": "senior-lsp-syntax"
 }
