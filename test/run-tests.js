@@ -148,7 +148,17 @@ runTest("inferCompletionContext resolves fields from alias", () => {
     assert.equal(context.kind, "fields");
     assert.equal(context.table?.name, "R034FUN");
 });
+runTest("inferCompletionContext resolves fields from cursor.sql assignment", () => {
+    const catalog = loadTableCatalog();
+    const document = createDocument([
+        "definir cursor cr034fun;",
+        "cr034fun.sql = \"SELECT * FROM R034FUN WHERE \""
+    ]);
+    const context = inferCompletionContext(document, { line: 1, character: 34 }, catalog);
 
+    assert.equal(context.kind, "fields");
+    assert.equal(context.table?.name, "R034FUN");
+});
 runTest("provideCompletionItems returns camelCase keyword items", () => {
     const catalog = loadTableCatalog();
     const Completion = require("../dist/features/completion").SeniorCompletionProvider;

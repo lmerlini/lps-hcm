@@ -17,7 +17,7 @@ Este projeto não reivindica quaisquer direitos sobre a própria linguagem Senio
 - Diagnósticos simples para variáveis não declaradas, nomes reservados e barras inválidas em strings.
 - Quick fixes para declarar variável e corrigir barras em strings.
 - Autocomplete contextual para palavras-chave, tipos, tabelas e campos conhecidos.
-- Leitura enriquecida de metadados a partir de `TABLES.Txt` e `relacionamentos.Txt`, quando esses arquivos estiverem presentes na extensão.
+- Leitura enriquecida de metadados a partir de `tabelas.txt` e `relacionamentos.txt`, quando esses arquivos estiverem presentes na extensão.
 
 ## Limitações atuais
 

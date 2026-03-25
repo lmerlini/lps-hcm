@@ -21,12 +21,23 @@ const keywordCamelCaseMap: Record<string, string> = {
 
 const reservedWords = new Set(reservedWordBase.map((keyword) => keyword.toLowerCase()));
 
+const noSemicolonKeywords = new Set([
+    "se", "senao", "enquanto", "para", "inicio", "fim", "funcao", "retorne",
+    "mensagem", "cancelar", "continue", "vapara", "regra", "inserir", "definir",
+    "execsql", "execsqlex", "abrir", "fechar", "proximo", "achou", "naoachou",
+    "iniciartransacao", "finalizartransacao", "desfazertransacao", "numero", "alfa",
+    "data", "grid", "tabela", "cursor", "valstr", "valret", "erro", "refaz",
+    "retorna", "e", "ou", "nao", "ler", "gravar"
+]);
+
 export const camelCaseKeyword = (keyword: string) => keywordCamelCaseMap[keyword.toLowerCase()] ?? keyword;
 
 export const diagnosticCodes = {
     undeclaredVariable: "senior.undeclaredVariable",
     reservedVariable: "senior.reservedVariable",
-    invalidStringEscape: "senior.invalidStringEscape"
+    invalidStringEscape: "senior.invalidStringEscape",
+    missingSemicolon: "senior.missingSemicolon",
+    missingColonInSql: "senior.missingColonInSql"
 } as const;
 
 export interface SeniorDiagnosticData {
@@ -58,6 +69,18 @@ export function analyzeDocument(document: vscode.TextDocument): vscode.Diagnosti
             continue;
         }
 
+        const firstToken = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)/i)?.[1]?.toLowerCase() ?? "";
+
+        if (!trimmed.endsWith(";") && !noSemicolonKeywords.has(firstToken)) {
+            diagnostics.push(createRangeDiagnostic(
+                new vscode.Range(lineIndex, Math.max(line.lastIndexOf(trimmed), 0), lineIndex, line.length),
+                "Cada execução de comando deve terminar com ';'.",
+                vscode.DiagnosticSeverity.Warning,
+                diagnosticCodes.missingSemicolon,
+                { lineNumber: lineIndex }
+            ));
+        }
+
         const declarationMatch = trimmed.match(declarationRegex);
         if (declarationMatch) {
             const variableName = declarationMatch[1];
@@ -84,16 +107,10 @@ export function analyzeDocument(document: vscode.TextDocument): vscode.Diagnosti
             const expression = assignmentMatch[2];
             const normalized = variableName.toLowerCase();
 
-            if (!declaredVariables.has(normalized) && !reservedWords.has(normalized) && !expression.includes(".")) {
-                diagnostics.push(createDiagnostic(
-                    document,
-                    lineIndex,
-                    variableName,
-                    `A variavel "${variableName}" nao foi definida com 'Definir'.`,
-                    vscode.DiagnosticSeverity.Warning,
-                    diagnosticCodes.undeclaredVariable,
-                    { varName: variableName }
-                ));
+            // Em Senior, variáveis número podem ser atribuídas sem definir
+            // Apenas registrar como variável válida para verificação em SQL
+            if (!reservedWords.has(normalized)) {
+                declaredVariables.add(normalized);
             }
         }
 
@@ -118,9 +135,63 @@ export function analyzeDocument(document: vscode.TextDocument): vscode.Diagnosti
                 ));
             }
         }
+
+        // Verificar SQL sem prefixo : em atribuições de .sql
+        const sqlAssignmentMatch = trimmed.match(/\.\s*sql\s*=\s*"([^"]*)"/i);
+        if (sqlAssignmentMatch) {
+            const sqlContent = sqlAssignmentMatch[1];
+            checkMissingColonInSql(sqlContent, lineIndex, line, declaredVariables, diagnostics, document);
+        }
     }
 
     return diagnostics;
+}
+
+function checkMissingColonInSql(
+    sqlContent: string,
+    lineIndex: number,
+    fullLine: string,
+    declaredVariables: Set<string>,
+    diagnostics: vscode.Diagnostic[],
+    document: vscode.TextDocument
+): void {
+    // Encontrar todas as variáveis declaradas que aparecem no SQL sem prefixo :
+    for (const variable of declaredVariables) {
+        // Padrão: procurar a variável não precedida por : e não dentro de uma string literal
+        // Usar word boundary para evitar falsos positivos
+        const pattern = new RegExp(`(?<!:)\\b${escapeRegex(variable)}\\b`, "gi");
+        let match: RegExpExecArray | null;
+        
+        while ((match = pattern.exec(sqlContent)) !== null) {
+            const matchIndex = match.index;
+            // Verificar se há um : logo antes (case case o regex não funcionou perfeitamente)
+            if (matchIndex > 0 && sqlContent[matchIndex - 1] === ':') {
+                continue;
+            }
+            
+            const linePosition = fullLine.indexOf(sqlContent);
+            if (linePosition === -1) continue;
+            
+            const absoluteCharPos = linePosition + matchIndex;
+            
+            diagnostics.push(createRangeDiagnostic(
+                new vscode.Range(
+                    lineIndex,
+                    absoluteCharPos,
+                    lineIndex,
+                    absoluteCharPos + variable.length
+                ),
+                `Variável "${variable}" usada em SQL sem prefixo ':'. Digite ":${variable}" ao invés de "${variable}".`,
+                vscode.DiagnosticSeverity.Error,
+                diagnosticCodes.missingColonInSql,
+                { varName: variable, lineNumber: lineIndex }
+            ));
+        }
+    }
+}
+
+function escapeRegex(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function stripLineComment(line: string): string {

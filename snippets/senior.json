@@ -14,11 +14,11 @@
         "body": [
             "se (${1:condicao})",
             "{",
-            "    ${2:// comandos se verdadeiro}",
+            "    ${2:// comandos se verdadeiro};",
             "}",
             "senao",
             "{",
-            "    ${3:// comandos se falso}",
+            "    ${3:// comandos se falso};",
             "}"
         ],
         "description": "Estrutura condicional Se/Senao"
@@ -26,8 +26,8 @@
     "Função com retorno": {
         "prefix": "funcao",
         "body": [
-            "definir funcao ${1:Nome}(numero ${2:Par1}, numero end ${3:Retorno})",
-            "funcao ${1:Nome}(numero ${2:Par1}, numero end ${3:Retorno})",
+            "definir funcao ${1:Nome}(numero ${2:Par1}, numero end ${3:Retorno});",
+            "funcao ${1:Nome}(numero ${2:Par1}, numero end ${3:Retorno});",
             "{",
             "    ${3:Retorno} = ${2:Par1} + 1;",
             "}"
@@ -39,7 +39,7 @@
         "body": [
             "enquanto (${1:condicao})",
             "{",
-            "    ${2:// comandos enquanto verdadeiro}",
+            "    ${2:// comandos enquanto verdadeiro};",
             "}"
         ],
         "description": "Loop Enquanto"
@@ -80,7 +80,7 @@
         ],
         "description": "Adiciona um comentário"
     },
-    "Definir Array Tabela":{
+    "Definir Array Tabela": {
         "prefix": "defat",
         "body": [
             "definir tabela[${1:size}] = { ${2:numero|alfa|data} ${3:var}; };"
@@ -116,10 +116,171 @@
             "${1:nomeCursor}.abrirCursor();",
             "se (${1:nomeCursor}.achou)",
             "{",
-            "    ${2:}",
+            "    ${4:// comandos se encontrou registros};",
             "}",
             "${1:nomeCursor}.fecharCursor();"
         ],
         "description": "Abre um cursor simples"
+    },
+    "para": {
+        "prefix": "para",
+        "body": [
+            "Para (${1:x} = ${2:0}; ${1:x} < ${3:max}, ${1:x}++)",
+            "{",
+            "\t$4",
+            "}"
+        ],
+        "description": "laço de repetição 'para'"
+    },
+    "SQL_Criar completo": {
+        "prefix": "cursor2",
+        "body": [
+            "definir alfa curNew;",
+            "definir alfa aCMD;",
+            "aCMD = \"${1:SELECT * FROM }\";",
+            "",
+            "SQL_Criar(${2:curNew});",
+            "SQL_UsarSqlSenior2(${2:curNew}, 0);",
+            "SQL_UsarAbrangencia(${2:curNew}, 0);",
+            "",
+            "SQL_DefinirComando(${2:curNew}, aCMD);",
+            "SQL_DefinirInteiro(${2:curNew}, \"nNumero\", nNumero);",
+            "SQL_DefinirAlfa(${2:curNew}, \"aAlfa\", aAlfa);",
+            "SQL_DefinirData(${2:curNew}, \"dData\", dData);",
+            "SQL_DefinirFlutuante(${2:curNew}, \"nFlutuante\", nFlutuante);",
+            "SQL_AbrirCursor(${2:curNew});",
+            "Enquanto(SQL_EOF(${2:curNew}) = 0)",
+            "{",            
+            "\tSQL_RetornarInteiro(${2:curNew}, \"nRetNumero\", nRetNumero);",
+            "\tSQL_RetornarAlfa(${2:curNew}, \"aRetAlfa\", aRetAlfa);",
+            "\tSQL_Proximo(${2:curNew});",
+            "}",
+            "SQL_FecharCursor(${2:curNew});",
+            "SQL_Destruir(${2:curNew});"
+        ],
+        "description": "SQL_Criar: Criação Completa"
+    },
+    "SQL_DefinirInteiro": {
+        "prefix": "SQL_DefinirInteiro",
+        "body": [
+            "SQL_DefinirInteiro(${1:curNew}, \"${2:Coluna_SQL}\", ${3:vVlrRet});"
+        ],
+        "description": "SQL_DefinirInteiro(Cursor, \"Coluna\", Variavel entrada)"
+    },
+    "SQL_DefinirAlfa": {
+        "prefix": "SQL_DefinirAlfa",
+        "body": [
+            "SQL_DefinirAlfa(${1:curNew}, \"${2:Coluna_SQL}\", ${3:vVlrRet});"
+        ],
+        "description": "SQL_DefinirAlfa(Cursor, \"Coluna\", Variavel entrada)"
+    },
+    "SQL_DefinirData": {
+        "prefix": "SQL_DefinirData",
+        "body": [
+            "SQL_DefinirData(${1:curNew}, \"${2:Coluna_SQL}\", ${3:vVlrRet});"
+        ],
+        "description": "SQL_DefinirData(Cursor, \"Coluna\", Variavel entrada)"
+    },
+    "SQL_DefinirFlutuante": {
+        "prefix": "SQL_DefinirFlutuante",
+        "body": [
+            "SQL_DefinirFlutuante(${1:curNew}, \"${2:Coluna_SQL}\", ${3:vVlrRet});"
+        ],
+        "description": "SQL_DefinirFlutuante(Cursor, \"Coluna\", Variavel entrada)"
+    },
+    "SQL_EOF enquanto": {
+        "prefix": "Enquanto (SQL_EOF",
+        "body": [
+            "Enquanto (SQL_EOF(${1:curNew}) = 0)",
+            "{",
+            "\t$0",
+            "\tSQL_Proximo(${1:curNew});",
+            "}"
+        ],
+        "description": "SQL_EOF(Cursor) com enquanto: Verifica se chegou no fim. Retorna 0 se ainda houver registros, 1 se chegou ao fim."
+    },
+    "SQL_RetornarInteiro": {
+        "prefix": "SQL_RetornarInteiro",
+        "body": [
+            "SQL_RetornarInteiro(${1:curNew}, \"${2:Coluna_SQL}\", ${3:vVlrRet});"
+        ],
+        "description": "SQL_RetornarInteiro(Cursor, \"Coluna\", Variavel retorno)"
+    },
+    "SQL_RetornarAlfa": {
+        "prefix": "SQL_RetornarAlfa",
+        "body": [
+            "SQL_RetornarAlfa(${1:curNew}, \"${2:Coluna_SQL}\", ${3:vVlrRet});"
+        ],
+        "description": "SQL_RetornarAlfa(Cursor, \"Coluna\", Variavel retorno)"
+    },
+    "SQL_RetornarData": {
+        "prefix": "SQL_RetornarData",
+        "body": [
+            "SQL_RetornarData(${1:curNew}, \"${2:Coluna_SQL}\", ${3:vVlrRet});"
+        ],
+        "description": "SQL_RetornarData(Cursor, \"Coluna\", Variavel retorno)"
+    },
+    "SQL_RetornarFlutuante": {
+        "prefix": "SQL_RetornarFlutuante",
+        "body": [
+            "SQL_RetornarFlutuante(${1:curNew}, \"${2:Coluna_SQL}\", ${3:vVlrRet});"
+        ],
+        "description": "SQL_RetornarFlutuante(Cursor, \"Coluna\", Variavel retorno)"
+    },
+    "SQL_Proximo": {
+        "prefix": "SQL_Proximo",
+        "body": [
+            "SQL_Proximo(${1:curNew});"
+        ],
+        "description": "SQL_Proximo(Cursor): Avança para o próximo registro."
+    },    
+    "ExecSQL insert": {
+        "prefix": "ExecSQL",
+        "body": [
+            "ExecSql \"INSERT INTO ${1:Tabela} (${2:Campos}) VALUES (:${3:Variaveis})\";"
+        ],
+        "description": "ExecSQL: inserir dados em tabela"
+    },
+    "ExecSQL update": {
+        "prefix": "ExecSQL",
+        "body": [
+            "ExecSql \"UPDATE ${1:Tabela} SET (${2:Campo}) = (:${3:Variavel}) WHERE ${4:Condicao}\";"
+        ],
+        "description": "ExecSQL: atualizar dados em tabela"
+    },
+    "ExecSQL delete": {
+        "prefix": "ExecSQL",
+        "body": [
+            "ExecSql \"DELETE ${1:Tabela} WHERE ${2:Condicao}\";"
+        ],
+        "description": "ExecSQL: deletar dados em tabela"
+    },
+    "ExecSQLEx insert": {
+        "prefix": "ExecSQLEx",
+        "body": [
+            "ExecSqlEx (\"INSERT INTO ${1:Tabela} (${2:Campos}) VALUES (:${3:Variaveis})\", nRetSql, aRetSql);"
+        ],
+        "description": "ExecSQL: inserir dados em tabela"
+    },
+    "ExecSQLEx update": {
+        "prefix": "ExecSQLEx",
+        "body": [
+            "ExecSqlEx (\"UPDATE ${1:Tabela} SET (${2:Campo}) = (:${3:Variavel}) WHERE ${4:Condicao}\", nRetSql, aRetSql);"
+        ],
+        "description": "ExecSQL: atualizar dados em tabela"
+    },
+    "ExecSQLEx delete": {
+        "prefix": "ExecSQLEx",
+        "body": [
+            "ExecSqlEx (\"DELETE ${1:Tabela} WHERE ${2:Condicao}\", nRetSql, aRetSql);"
+        ],
+        "description": "ExecSQL: deletar dados em tabela"
+    },
+    "GeraLog": {
+        "prefix": "GeraLog",
+        "body": [
+            "GeraLog(\"${1:Log}\");"
+        ],
+        "description": "GeraLog(\"Log\"): Gera uma mensagem de log"
     }
 }

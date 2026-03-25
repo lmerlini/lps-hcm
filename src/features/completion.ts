@@ -78,13 +78,16 @@ export function inferCompletionContext(
 
     const aliasReference = linePrefix.match(aliasReferenceRegex)?.[1];
     if (aliasReference) {
-        const table = findTableFromDocument(document.getText(), catalog, aliasReference);
+        let table = findTableFromDocument(document.getText(), catalog, aliasReference);
+        if (!table) {
+            table = findTableFromCursorSqlAssignment(document.getText(), aliasReference, catalog);
+        }
         if (table) {
             return { kind: "fields", table };
         }
     }
 
-    if (/\b(select|where|and|or|order\s+by)\s+[\w,.\s]*$/i.test(linePrefix)) {
+    if (isSqlContext(linePrefix)) {
         const table = inferPrimaryTable(document.getText(), catalog);
         if (table) {
             return { kind: "fields", table };
@@ -105,6 +108,23 @@ function findTableFromDocument(documentText: string, catalog: TablesCatalog, ref
     }
 
     return findTableByReference(catalog, normalizedReference);
+}
+
+function findTableFromCursorSqlAssignment(documentText: string, cursor: string, catalog: TablesCatalog): TableDefinition | undefined {
+    const normalizedCursor = cursor.toUpperCase();
+    const cursorSqlPattern = new RegExp(`\\b${normalizedCursor}\\.sql\\s*=\\s*"[^"]*\\bFROM\\s+([A-Z0-9_]+)`, "i");
+    const cursorSqlMatch = documentText.match(cursorSqlPattern);
+
+    if (cursorSqlMatch) {
+        return findTableByReference(catalog, cursorSqlMatch[1]);
+    }
+
+    return undefined;
+}
+
+function isSqlContext(linePrefix: string): boolean {
+    const normalized = linePrefix.replace(/["'`\s;]+$/g, "");
+    return /\b(select|where|and|or|order\s+by)\b/i.test(normalized);
 }
 
 function inferPrimaryTable(documentText: string, catalog: TablesCatalog): TableDefinition | undefined {

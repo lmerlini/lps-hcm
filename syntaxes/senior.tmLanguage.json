@@ -13,7 +13,7 @@
         },
         {
             "name": "keyword.control.senior",
-            "match": "(?i)\\b(se|senao|enquanto|para|fim|inicio|funcao|retorne|mensagem|cancelar|continue|vapara|regra)\\b"
+            "match": "(?i)\\b(se|senao|enquanto|para|pare|fim|inicio|funcao|retorne|continue|vapara|regra)\\b"
         },
         {
             "name": "storage.type.senior",
@@ -21,7 +21,7 @@
         },
         {
             "name": "constant.language.senior",
-            "match": "(?i)\\b(retorna|erro|refaz|ler|gravar|abrir|fechar|achou|naoAchou|iniciarTransacao|finalizarTransacao|desfazerTransacao|execSql|execSqlEx|proximo|primeiro|ultimo)\\b"
+            "match": "(?i)\\b(retorna|erro|refaz|ler|lernl|gravar|gravarnl|abrir|fechar|achou|naoAchou|iniciarTransacao|finalizarTransacao|desfazerTransacao|execSql|execSqlEx|proximo|primeiro|ultimo|cancel|mensagem|formatar|formatarN|valRet|valStr|inserir|sql_criar|sql_definirInteiro|sql_definirAlfa|sql_definirData|sql_definirFlutuante|sql_retornarInteiro|sql_retornarAlfa|sql_retornarData|sql_retornarFlutuante|sql_proximo|sql_fecharCursor|sql_destruir|sql_abrirCursor|sql_eof|sql_usarSqlSenior2|sql_usarAbrangencia|sql_definirComando)\\b"
         },
         {
             "name": "keyword.operator.senior",

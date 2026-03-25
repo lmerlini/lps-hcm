@@ -21,7 +21,7 @@ export function parseTablesText(contents: string): TableDefinition[] {
         }
 
         const [, rawName, description] = headerMatch;
-        const name = rawName.toUpperCase();
+        const name = rawName.toLowerCase();
         const totalFields = Number(section.match(totalFieldsRegex)?.[1] ?? "0");
         const primaryKey = splitFields(section.match(primaryKeyRegex)?.[1]);
         const fields = parseFieldsBlock(section, primaryKey);
@@ -60,9 +60,9 @@ export function parseRelationshipsText(contents: string): Map<string, TableRelat
         }
 
         const [, rawTableName, rawFieldName, rawTargetTable] = tableMatch;
-        const tableName = rawTableName.toUpperCase();
-        const fieldName = rawFieldName.toUpperCase();
-        const targetTable = rawTargetTable.toUpperCase();
+        const tableName = rawTableName.toLowerCase();
+        const fieldName = rawFieldName.toLowerCase();
+        const targetTable = rawTargetTable.toLowerCase();
         const sourceFields = splitFields(sourceMatch[1]);
         const targetFields = splitFields(sourceMatch[2]);
         const resultField = resultMatch?.[1]?.trim();
@@ -140,7 +140,7 @@ function parseFieldsBlock(section: string, primaryKey: string[]): Record<string,
         }
 
         const [name, requiredLabel, rawType, ...descriptionParts] = columns;
-        const normalizedName = name.toUpperCase();
+        const normalizedName = name.toLowerCase();
         fields[normalizedName] = {
             tipo: normalizeType(rawType),
             tipoOriginal: rawType,
@@ -180,7 +180,7 @@ function parseRelationshipsBlock(section: string): TableRelationship[] {
         const [name, rawTargetTable, sourceFieldsRaw, targetFieldsRaw] = columns;
         relationships.push({
             name,
-            targetTable: rawTargetTable.toUpperCase(),
+            targetTable: rawTargetTable.toLowerCase(),
             sourceFields: splitFields(sourceFieldsRaw),
             targetFields: splitFields(targetFieldsRaw)
         });
@@ -221,7 +221,7 @@ function splitFields(value?: string): string[] {
 
     return value
         .split(";")
-        .map((field) => field.trim().toUpperCase())
+        .map((field) => field.trim().toLowerCase())
         .filter(Boolean);
 }
 
