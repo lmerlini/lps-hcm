@@ -37,12 +37,17 @@ exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
 const tables_1 = require("./data/tables");
+const seniorKnowledge_1 = require("./data/seniorKnowledge");
 const codeActions_1 = require("./features/codeActions");
 const completion_1 = require("./features/completion");
+const hover_1 = require("./features/hover");
+const signatureHelp_1 = require("./features/signatureHelp");
 const diagnostics_1 = require("./features/diagnostics");
+const formatter_1 = require("./features/formatter");
 function activate(context) {
     const diagnosticCollection = vscode.languages.createDiagnosticCollection("senior");
     const tableCatalog = (0, tables_1.loadTableCatalog)(context.extensionPath);
+    const seniorKnowledge = (0, seniorKnowledge_1.loadSeniorKnowledge)(context.extensionPath);
     const refreshDiagnostics = (document) => {
         if (document.languageId !== "senior") {
             return;
@@ -53,7 +58,7 @@ function activate(context) {
     context.subscriptions.push(diagnosticCollection);
     context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(refreshDiagnostics), vscode.workspace.onDidChangeTextDocument((event) => refreshDiagnostics(event.document)), vscode.workspace.onDidCloseTextDocument((document) => diagnosticCollection.delete(document.uri)));
     context.subscriptions.push(vscode.commands.registerCommand("senior.createVariable", codeActions_1.createVariableCommand), vscode.commands.registerCommand("senior.fixBackslashes", codeActions_1.fixBackslashesCommand));
-    context.subscriptions.push(vscode.languages.registerCodeActionsProvider("senior", new codeActions_1.SeniorCodeActionProvider(), { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }), vscode.languages.registerCompletionItemProvider("senior", new completion_1.SeniorCompletionProvider(tableCatalog), ".", " ", "\""));
+    context.subscriptions.push(vscode.languages.registerCodeActionsProvider("senior", new codeActions_1.SeniorCodeActionProvider(), { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] }), vscode.languages.registerCompletionItemProvider("senior", new completion_1.SeniorCompletionProvider(tableCatalog, seniorKnowledge), ".", " ", "\""), vscode.languages.registerHoverProvider("senior", new hover_1.SeniorHoverProvider(tableCatalog, seniorKnowledge)), vscode.languages.registerSignatureHelpProvider("senior", new signatureHelp_1.SeniorSignatureHelpProvider(seniorKnowledge), { triggerCharacters: ["(", ","], retriggerCharacters: [","] }), vscode.languages.registerDocumentFormattingEditProvider("senior", new formatter_1.SeniorDocumentFormattingProvider()));
 }
 function deactivate() {
     // No-op: the extension keeps only disposables registered in the context.

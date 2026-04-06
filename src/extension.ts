@@ -1,12 +1,17 @@
 import * as vscode from "vscode";
 import { loadTableCatalog } from "./data/tables";
+import { loadSeniorKnowledge } from "./data/seniorKnowledge";
 import { SeniorCodeActionProvider, createVariableCommand, fixBackslashesCommand } from "./features/codeActions";
 import { SeniorCompletionProvider } from "./features/completion";
+import { SeniorHoverProvider } from "./features/hover";
+import { SeniorSignatureHelpProvider } from "./features/signatureHelp";
 import { analyzeDocument } from "./features/diagnostics";
+import { SeniorDocumentFormattingProvider } from "./features/formatter";
 
 export function activate(context: vscode.ExtensionContext) {
     const diagnosticCollection = vscode.languages.createDiagnosticCollection("senior");
     const tableCatalog = loadTableCatalog(context.extensionPath);
+    const seniorKnowledge = loadSeniorKnowledge(context.extensionPath);
 
     const refreshDiagnostics = (document: vscode.TextDocument) => {
         if (document.languageId !== "senior") {
@@ -38,8 +43,21 @@ export function activate(context: vscode.ExtensionContext) {
         ),
         vscode.languages.registerCompletionItemProvider(
             "senior",
-            new SeniorCompletionProvider(tableCatalog),
+            new SeniorCompletionProvider(tableCatalog, seniorKnowledge),
             ".", " ", "\""
+        ),
+        vscode.languages.registerHoverProvider(
+            "senior",
+            new SeniorHoverProvider(tableCatalog, seniorKnowledge)
+        ),
+        vscode.languages.registerSignatureHelpProvider(
+            "senior",
+            new SeniorSignatureHelpProvider(seniorKnowledge),
+            { triggerCharacters: ["(", ","], retriggerCharacters: [","] }
+        ),
+        vscode.languages.registerDocumentFormattingEditProvider(
+            "senior",
+            new SeniorDocumentFormattingProvider()
         )
     );
 }

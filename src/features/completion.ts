@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { findTableByReference } from "../data/tables";
-import { TableDefinition, TablesCatalog } from "../types";
+import { TableDefinition, TablesCatalog, SeniorKnowledgeBase, SeniorFuncao, SeniorVariavel } from "../types";
 
 const keywordBaseItems = [
     "se", "senao", "enquanto", "para", "inicio", "fim", "funcao", "retorne",
@@ -28,7 +28,16 @@ export interface CompletionContext {
 }
 
 export class SeniorCompletionProvider implements vscode.CompletionItemProvider {
-    constructor(private readonly catalog: TablesCatalog) {}
+    private funcaoItems: vscode.CompletionItem[] = [];
+    private variavelItems: vscode.CompletionItem[] = [];
+
+    constructor(
+        private readonly catalog: TablesCatalog,
+        private readonly knowledge: SeniorKnowledgeBase
+    ) {
+        this.funcaoItems = this.buildFuncaoItems();
+        this.variavelItems = this.buildVariavelItems();
+    }
 
     provideCompletionItems(document: vscode.TextDocument, position: vscode.Position): vscode.CompletionItem[] {
         const context = inferCompletionContext(document, position, this.catalog);
@@ -56,8 +65,42 @@ export class SeniorCompletionProvider implements vscode.CompletionItemProvider {
                 });
             case "keywords":
             default:
-                return keywordItems.map((keyword) => createCompletionItem(keyword, vscode.CompletionItemKind.Keyword, "Palavra-chave Senior"));
+                return [
+                    ...this.funcaoItems,
+                    ...this.variavelItems,
+                    ...keywordItems.map((keyword) => {
+                        const item = createCompletionItem(keyword, vscode.CompletionItemKind.Keyword, "Palavra-chave Senior");
+                        item.sortText = `zzz_${keyword}`;
+                        return item;
+                    })
+                ];
         }
+    }
+
+    private buildFuncaoItems(): vscode.CompletionItem[] {
+        return this.knowledge.funcoes
+            .filter((fn) => fn.nome && fn.assinaturas?.length)
+            .map((fn) => {
+                const item = new vscode.CompletionItem(fn.nome, vscode.CompletionItemKind.Function);
+                item.detail = buildFuncaoDetail(fn);
+                item.documentation = new vscode.MarkdownString(buildFuncaoDocumentation(fn));
+                item.sortText = `0_${fn.nome}`;
+                if (fn.parametros?.length) {
+                    item.insertText = new vscode.SnippetString(`${fn.nome}($1)`);
+                    item.command = { command: "editor.action.triggerParameterHints", title: "Trigger Parameter Hints" };
+                }
+                return item;
+            });
+    }
+
+    private buildVariavelItems(): vscode.CompletionItem[] {
+        return this.knowledge.variaveis.map((v) => {
+            const item = new vscode.CompletionItem(v.nome, vscode.CompletionItemKind.Variable);
+            item.detail = `Variavel interna Senior - ${v.descricao}`;
+            item.documentation = new vscode.MarkdownString(buildVariavelDocumentation(v));
+            item.sortText = `1_${v.nome}`;
+            return item;
+        });
     }
 }
 
@@ -219,4 +262,77 @@ function buildFieldDocumentation(table: TableDefinition | undefined, fieldName: 
     }
 
     return lines.join("\n");
+}
+
+// --- Documentação de funções e variáveis Senior ---
+
+function buildFuncaoDetail(fn: SeniorFuncao): string {
+    const parts = [fn.familia];
+    if (fn.modulos_disponiveis?.length) {
+        parts.push(fn.modulos_disponiveis.join(", "));
+    }
+    return parts.join(" | ");
+}
+
+function buildFuncaoDocumentation(fn: SeniorFuncao): string {
+    const lines: string[] = [];
+
+    lines.push(`### ${fn.nome}`);
+
+    if (fn.assinaturas?.length) {
+        lines.push("```senior");
+        for (const sig of fn.assinaturas) {
+            lines.push(sig);
+        }
+        lines.push("```");
+    }
+
+    if (fn.descricao) {
+        lines.push(fn.descricao);
+    }
+
+    if (fn.parametros?.length) {
+        lines.push("**Parametros:**");
+        for (const p of fn.parametros) {
+            const desc = p.descricao ? ` - ${p.descricao}` : "";
+            lines.push(`- \`${p.nome}\` (${p.tipo})${desc}`);
+        }
+    }
+
+    if (fn.retorno) {
+        lines.push(`**Retorno:** ${fn.retorno}`);
+    }
+
+    if (fn.exemplos?.length) {
+        lines.push("**Exemplos:**");
+        lines.push("```senior");
+        for (const ex of fn.exemplos) {
+            lines.push(ex);
+        }
+        lines.push("```");
+    }
+
+    if (fn.observacoes?.length) {
+        const obs = fn.observacoes.filter((o) => o && o.length > 5);
+        if (obs.length) {
+            lines.push("**Obs:** " + obs.join(" | "));
+        }
+    }
+
+    if (fn.url) {
+        lines.push(`[Documentacao Senior](${fn.url})`);
+    }
+
+    return lines.join("\n\n");
+}
+
+function buildVariavelDocumentation(v: SeniorVariavel): string {
+    const lines: string[] = [];
+    lines.push(`### ${v.nome}`);
+    lines.push(`**Descricao:** ${v.descricao}`);
+    lines.push(`**Categoria:** ${v.categoria}`);
+    if (v.url) {
+        lines.push(`[Documentacao Senior](${v.url})`);
+    }
+    return lines.join("\n\n");
 }

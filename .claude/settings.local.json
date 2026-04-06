@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import json; d=json.load\\(open\\('E:/scrapper/senior_scraper/output/senior_funcoes.json','r',encoding='utf-8'\\)\\); print\\(f'Total funcoes: {len\\(d\\)}'\\); print\\(json.dumps\\(d[0], ensure_ascii=False, indent=2\\)[:2000\\)\\)\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('E:/scrapper/senior_scraper/output/senior_funcoes.json','r',encoding='utf-8'\\)\\); print\\(f'Total funcoes: {len\\(d\\)}'\\); print\\(json.dumps\\(d[0], ensure_ascii=False, indent=2\\)[:2000]\\)\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('E:/scrapper/senior_scraper/output/senior_variaveis.json','r',encoding='utf-8'\\)\\); print\\(f'Total variaveis: {len\\(d\\)}'\\); print\\(json.dumps\\(d[0], ensure_ascii=False, indent=2\\)[:1500]\\)\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('E:/scrapper/senior_scraper/output/senior_variaveis.json','r',encoding='utf-8'\\)\\); print\\(f'Total variaveis: {len\\(d\\)}'\\); print\\(json.dumps\\(d[0], ensure_ascii=False, indent=2\\)[:1500]\\)\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('E:/scrapper/senior_scraper/output/senior_sintaxe.json','r',encoding='utf-8'\\)\\); print\\(f'Total sintaxe: {len\\(d\\)}'\\); print\\(json.dumps\\(d[:2], ensure_ascii=False, indent=2\\)[:1500]\\)\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('E:/scrapper/senior_scraper/output/senior_sintaxe.json','r',encoding='utf-8'\\)\\); print\\(f'Total sintaxe: {len\\(d\\)}'\\); print\\(json.dumps\\(d[:2], ensure_ascii=False, indent=2\\)[:1500]\\)\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('E:/scrapper/senior_scraper/output/senior_funcoes.json','r',encoding='utf-8'\\)\\); funcs_com_params = [f for f in d if f.get\\('parametros'\\)]; print\\(f'Com parametros: {len\\(funcs_com_params\\)}/{len\\(d\\)}'\\); print\\(json.dumps\\(funcs_com_params[5], ensure_ascii=False, indent=2\\)[:2000]\\)\")",
+      "Bash(cp \"E:/scrapper/senior_scraper/output/senior_funcoes.json\" \"c:/Senior/Vetorh/controle de versão/lps-hcm/src/data/\")",
+      "Bash(cp \"E:/scrapper/senior_scraper/output/senior_variaveis.json\" \"c:/Senior/Vetorh/controle de versão/lps-hcm/src/data/\")",
+      "Bash(npm run:*)",
+      "Bash(ls \"c:/Senior/Vetorh/controle de versão/lps-hcm/src/data/\"*.json)"
+    ]
+  }
+}

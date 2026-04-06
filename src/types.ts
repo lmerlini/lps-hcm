@@ -37,3 +37,40 @@ export interface TablesCatalog {
     byName: Map<string, TableDefinition>;
     byAlias: Map<string, TableDefinition>;
 }
+
+// --- Funções e variáveis Senior (dados do MCP lume-LSP) ---
+
+export interface SeniorParametro {
+    nome: string;
+    tipo: string;
+    descricao: string;
+}
+
+export interface SeniorFuncao {
+    nome: string;
+    slug: string;
+    familia: string;
+    descricao: string;
+    modulos_disponiveis: string[];
+    assinaturas: string[];
+    parametros: SeniorParametro[];
+    retorno: string;
+    exemplos: string[];
+    observacoes: string[];
+    url: string;
+}
+
+export interface SeniorVariavel {
+    nome: string;
+    slug: string;
+    descricao: string;
+    url: string;
+    categoria: string;
+}
+
+export interface SeniorKnowledgeBase {
+    funcoes: SeniorFuncao[];
+    variaveis: SeniorVariavel[];
+    funcByName: Map<string, SeniorFuncao>;
+    varByName: Map<string, SeniorVariavel>;
+}
