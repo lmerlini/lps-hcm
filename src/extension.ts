@@ -7,6 +7,7 @@ import { SeniorHoverProvider } from "./features/hover";
 import { SeniorSignatureHelpProvider } from "./features/signatureHelp";
 import { analyzeDocument } from "./features/diagnostics";
 import { SeniorDocumentFormattingProvider } from "./features/formatter";
+import { createExportKnowledgeCommand } from "./features/exportKnowledge";
 
 export function activate(context: vscode.ExtensionContext) {
     const diagnosticCollection = vscode.languages.createDiagnosticCollection("senior");
@@ -32,7 +33,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand("senior.createVariable", createVariableCommand),
-        vscode.commands.registerCommand("senior.fixBackslashes", fixBackslashesCommand)
+        vscode.commands.registerCommand("senior.fixBackslashes", fixBackslashesCommand),
+        vscode.commands.registerCommand("senior.exportKnowledge", createExportKnowledgeCommand(context.extensionPath))
     );
 
     context.subscriptions.push(

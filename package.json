@@ -28,6 +28,10 @@
       {
         "command": "senior.fixBackslashes",
         "title": "Senior: Corrigir barras em string"
+      },
+      {
+        "command": "senior.exportKnowledge",
+        "title": "Senior: Exportar conhecimento (funções, variáveis, tabelas) para IA"
       }
     ],
     "languages": [
