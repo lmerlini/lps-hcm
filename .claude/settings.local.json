@@ -11,7 +11,8 @@
       "Bash(cp \"E:/scrapper/senior_scraper/output/senior_funcoes.json\" \"c:/Senior/Vetorh/controle de versão/lps-hcm/src/data/\")",
       "Bash(cp \"E:/scrapper/senior_scraper/output/senior_variaveis.json\" \"c:/Senior/Vetorh/controle de versão/lps-hcm/src/data/\")",
       "Bash(npm run:*)",
-      "Bash(ls \"c:/Senior/Vetorh/controle de versão/lps-hcm/src/data/\"*.json)"
+      "Bash(ls \"c:/Senior/Vetorh/controle de versão/lps-hcm/src/data/\"*.json)",
+      "Bash(\"E:\\\\scrapper\\\\senior_scraper\\\\.venv\\\\Scripts\\\\pip.exe\" show *)"
     ]
   }
 }

@@ -78,8 +78,8 @@ function runTest(name, fn) {
 runTest("loadTableCatalog normalizes tables and aliases", () => {
     const catalog = loadTableCatalog();
 
-    assert.ok(catalog.byName.has("R034FUN"));
-    assert.equal(catalog.byAlias.get("FUN")?.name, "R034FUN");
+    assert.ok(catalog.byName.has("r034fun"));
+    assert.equal(catalog.byAlias.get("fun")?.name, "r034fun");
 });
 
 runTest("parseTablesText reads metadata from TABLES format", () => {
@@ -98,10 +98,10 @@ runTest("parseTablesText reads metadata from TABLES format", () => {
     const tables = parseTablesText(sample);
 
     assert.equal(tables.length, 1);
-    assert.equal(tables[0].name, "R000ADP");
-    assert.equal(tables[0].primaryKey?.[0], "CODUSU");
-    assert.equal(tables[0].fields.CODUSU.tipo, "numero");
-    assert.equal(tables[0].fields.CODUSU.obrigatorio, true);
+    assert.equal(tables[0].name, "r000adp");
+    assert.equal(tables[0].primaryKey?.[0], "codusu");
+    assert.equal(tables[0].fields.codusu.tipo, "numero");
+    assert.equal(tables[0].fields.codusu.obrigatorio, true);
 });
 
 runTest("mergeRelationshipMetadata enriches fields with relationships", () => {
@@ -125,8 +125,8 @@ runTest("mergeRelationshipMetadata enriches fields with relationships", () => {
 
     const merged = mergeRelationshipMetadata(tables, relationships);
 
-    assert.equal(merged[0].fields.CODUSU.relationship?.targetTable, "R999USU");
-    assert.equal(merged[0].fields.CODUSU.relationship?.resultField, "NomUsu");
+    assert.equal(merged[0].fields.codusu.relationship?.targetTable, "r999usu");
+    assert.equal(merged[0].fields.codusu.relationship?.resultField, "NomUsu");
 });
 
 runTest("inferCompletionContext suggests types after definir", () => {
@@ -146,7 +146,7 @@ runTest("inferCompletionContext resolves fields from alias", () => {
     const context = inferCompletionContext(document, { line: 0, character: 22 }, catalog);
 
     assert.equal(context.kind, "fields");
-    assert.equal(context.table?.name, "R034FUN");
+    assert.equal(context.table?.name, "r034fun");
 });
 runTest("inferCompletionContext resolves fields from cursor.sql assignment", () => {
     const catalog = loadTableCatalog();
@@ -154,15 +154,31 @@ runTest("inferCompletionContext resolves fields from cursor.sql assignment", () 
         "definir cursor cr034fun;",
         "cr034fun.sql = \"SELECT * FROM R034FUN WHERE \""
     ]);
-    const context = inferCompletionContext(document, { line: 1, character: 34 }, catalog);
+    const context = inferCompletionContext(document, { line: 1, character: 44 }, catalog);
 
     assert.equal(context.kind, "fields");
-    assert.equal(context.table?.name, "R034FUN");
+    assert.equal(context.table?.name, "r034fun");
+});
+runTest("inferCompletionContext resolves fields from cursor.sql call without equals", () => {
+    const catalog = loadTableCatalog();
+    const document = createDocument([
+        "definir cursor cr034fun;",
+        "cr034fun.sql  \"SELECT * FROM R034FUN where numemp=:nNumEmp\";",
+        "cr034fun.abrirCursor();",
+        "se (cr034fun.achou)",
+        "{",
+        "    dNome = cr034fun."
+    ]);
+    const context = inferCompletionContext(document, { line: 5, character: 21 }, catalog);
+
+    assert.equal(context.kind, "fields");
+    assert.equal(context.table?.name, "r034fun");
 });
 runTest("provideCompletionItems returns camelCase keyword items", () => {
     const catalog = loadTableCatalog();
     const Completion = require("../dist/features/completion").SeniorCompletionProvider;
-    const provider = new Completion(catalog);
+    const knowledge = { funcoes: [], variaveis: [], funcByName: new Map(), varByName: new Map() };
+    const provider = new Completion(catalog, knowledge);
     const document = createDocument([""]);
 
     const completions = provider.provideCompletionItems(document, { line: 0, character: 0 });
@@ -173,16 +189,18 @@ runTest("provideCompletionItems returns camelCase keyword items", () => {
     assert.ok(labels.includes("execSql"));
 });
 
-runTest("analyzeDocument flags undeclared variables and ignores declared ones", () => {
+runTest("analyzeDocument allows implicit assignment and flags reserved-word declarations", () => {
     const document = createDocument([
         "Definir Alfa nome;",
         "nome = \"ok\";",
-        "codigo = \"novo\";"
+        "codigo = \"novo\";",
+        "Definir Numero erro;"
     ]);
 
     const diagnostics = analyzeDocument(document);
     const messages = diagnostics.map((diagnostic) => diagnostic.message);
 
-    assert.equal(messages.some((message) => message.includes("\"nome\"")), false);
-    assert.equal(messages.some((message) => message.includes("\"codigo\"")), true);
+    // Em Senior, variáveis podem ser atribuídas sem 'definir', então 'codigo' não é sinalizado.
+    assert.equal(messages.some((message) => message.includes("palavra reservada")), true);
+    assert.equal(messages.some((message) => message.includes("\"erro\"")), true);
 });

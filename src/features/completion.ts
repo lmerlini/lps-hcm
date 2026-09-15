@@ -154,8 +154,11 @@ function findTableFromDocument(documentText: string, catalog: TablesCatalog, ref
 }
 
 function findTableFromCursorSqlAssignment(documentText: string, cursor: string, catalog: TablesCatalog): TableDefinition | undefined {
-    const normalizedCursor = cursor.toUpperCase();
-    const cursorSqlPattern = new RegExp(`\\b${normalizedCursor}\\.sql\\s*=\\s*"[^"]*\\bFROM\\s+([A-Z0-9_]+)`, "i");
+    const escapedCursor = escapeRegExp(cursor);
+    // Aceita tanto a atribuição com igual (cursor.sql = "...") quanto a chamada
+    // de método sem igual (cursor.sql "..."), usada na linguagem Senior.
+    // O delimitador pode ser aspas duplas ou simples.
+    const cursorSqlPattern = new RegExp(`\\b${escapedCursor}\\.sql\\b\\s*=?\\s*["'][^"']*\\bFROM\\s+([A-Z0-9_]+)`, "i");
     const cursorSqlMatch = documentText.match(cursorSqlPattern);
 
     if (cursorSqlMatch) {
@@ -163,6 +166,10 @@ function findTableFromCursorSqlAssignment(documentText: string, cursor: string, 
     }
 
     return undefined;
+}
+
+function escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function isSqlContext(linePrefix: string): boolean {
